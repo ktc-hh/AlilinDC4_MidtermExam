@@ -1,230 +1,110 @@
 import { useState } from "react";
-import {
-  Routes,
-  Route,
-  Link,
-  useParams,
-  useNavigate
-} from "react-router-dom";
-
-const events = [
-  {
-    id: "1",
-    title: "Web Dev Night",
-    date: "September 20, 2026",
-    location: "Computer Laboratory",
-    description: "Learn the basics of modern web development."
-  },
-  {
-    id: "2",
-    title: "Tech Career Talk",
-    date: "September 25, 2026",
-    location: "School Auditorium",
-    description: "A discussion about careers and opportunities in IT."
-  },
-  {
-    id: "3",
-    title: "Coding Workshop",
-    date: "October 5, 2026",
-    location: "IT Laboratory",
-    description: "Practice programming through hands-on activities."
-  }
-];
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   return (
     <nav>
-      <h2>EventHub</h2>
-
-      <div>
-        <Link to="/">Home</Link>
-        <Link to="/events">Events</Link>
-        <Link to="/register">Register</Link>
-      </div>
+      <Link to="/">Home</Link>
+      <Link to="/about">About</Link>
+      <Link to="/contact">Contact</Link>
     </nav>
   );
 }
 
 function Home() {
   return (
-    <div className="container">
-      <h1>Welcome to EventHub!</h1>
+    <div>
+      <h1>Welcome to My Mini Site</h1>
+      <p>This is my simple React website.</p>
+    </div>
+  );
+}
+
+function About() {
+  return (
+    <div>
+      <h1>About Me</h1>
       <p>
-        EventHub is a simple website where students can browse
-        upcoming events and register to attend.
+        Hello! I am a BSIT student learning React.
+        This mini site is one of my coding activities.
       </p>
-
-      <Link className="button" to="/events">
-        View Events
-      </Link>
     </div>
   );
 }
 
-function Events() {
-  return (
-    <div className="container">
-      <h1>Upcoming Events</h1>
-
-      <div className="events">
-        {events.map((event) => (
-          <div className="card" key={event.id}>
-            <h2>{event.title}</h2>
-            <p>{event.date}</p>
-            <p>{event.location}</p>
-
-            <Link to={`/events/${event.id}`}>
-              View Details
-            </Link>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function EventDetails() {
-  const { id } = useParams();
-
-  const event = events.find((event) => event.id === id);
-
-  if (!event) {
-    return (
-      <div className="container">
-        <h1>Event Not Found</h1>
-        <Link to="/events">Back to Events</Link>
-      </div>
-    );
-  }
-
-  return (
-    <div className="container">
-      <h1>{event.title}</h1>
-      <p><strong>Date:</strong> {event.date}</p>
-      <p><strong>Location:</strong> {event.location}</p>
-      <p>{event.description}</p>
-
-      <Link className="button" to="/register">
-        Register for Event
-      </Link>
-    </div>
-  );
-}
-
-function Register() {
+function Contact() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    event: ""
-  });
-
-  const [errors, setErrors] = useState({});
-
-  function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    });
-  }
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    const newErrors = {};
-
-    // Validation 1: Name required
-    if (form.name.trim() === "") {
-      newErrors.name = "Name is required.";
+    if (name === "" || email === "") {
+      setError("Please enter your name and email.");
+      return;
     }
 
-    // Validation 2: Name minimum length
-    else if (form.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters.";
-    }
-
-    // Validation 3: Email required and must contain @
-    if (form.email.trim() === "") {
-      newErrors.email = "Email is required.";
-    } else if (!form.email.includes("@")) {
-      newErrors.email = "Please enter a valid email.";
-    }
-
-    // Validation 4: Event required
-    if (form.event === "") {
-      newErrors.event = "Please select an event.";
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      navigate("/confirmation", {
-        state: {
-          name: form.name,
-          event: form.event
-        }
-      });
-    }
+    setError("");
+    navigate("/thank-you");
   }
 
   return (
-    <div className="container">
-      <h1>Register for an Event</h1>
+    <div>
+      <h1>Contact Me</h1>
 
       <form onSubmit={handleSubmit}>
-        <label>Name</label>
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Enter your name"
-        />
-        {errors.name && <p className="error">{errors.name}</p>}
+        <div>
+          <label>Name:</label>
+          <br />
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
 
-        <label>Email</label>
-        <input
-          type="text"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          placeholder="Enter your email"
-        />
-        {errors.email && <p className="error">{errors.email}</p>}
+        <br />
 
-        <label>Select Event</label>
-        <select
-          name="event"
-          value={form.event}
-          onChange={handleChange}
-        >
-          <option value="">-- Select an event --</option>
+        <div>
+          <label>Email:</label>
+          <br />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-          {events.map((event) => (
-            <option key={event.id} value={event.title}>
-              {event.title}
-            </option>
-          ))}
-        </select>
+        <br />
 
-        {errors.event && <p className="error">{errors.event}</p>}
+        <div>
+          <label>Message:</label>
+          <br />
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </div>
 
-        <button type="submit">Register</button>
+        <br />
+
+        {error && <p>{error}</p>}
+
+        <button type="submit">Send Message</button>
       </form>
     </div>
   );
 }
 
-function Confirmation() {
+function ThankYou() {
   return (
-    <div className="container">
-      <h1>Registration Successful!</h1>
-      <p>Thank you for registering for an EventHub event.</p>
-
-      <Link className="button" to="/events">
-        Back to Events
-      </Link>
+    <div>
+      <h1>Thank You!</h1>
+      <p>Your message has been submitted successfully.</p>
     </div>
   );
 }
@@ -236,10 +116,9 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/events/:id" element={<EventDetails />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/confirmation" element={<Confirmation />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/thank-you" element={<ThankYou />} />
       </Routes>
     </>
   );
